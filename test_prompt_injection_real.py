@@ -25,7 +25,10 @@ except ImportError:
 class PromptInjectionTester:
     def __init__(self):
         self.api_key = os.environ.get("GEN_AI_API_KEY", "").strip('"').strip("'")
-        self.model = os.environ.get("GEN_AI_MODEL_VERSION", "gpt-4o-mini").strip('"').strip("'")
+
+        # HARDCODED: Force gpt-5-nano for this test run
+        self.model = "gpt-5-nano"
+        print(f"[*] OVERRIDE: Forcing model to {self.model}")
 
         if not self.api_key:
             raise ValueError("GEN_AI_API_KEY environment variable not set!")
