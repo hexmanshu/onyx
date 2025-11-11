@@ -87,14 +87,21 @@ Assistant:"""
 
         try:
             # Call OpenAI exactly as Onyx would
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "user", "content": full_prompt}
-                ],
-                temperature=0,
-                max_tokens=500
-            )
+            # Note: gpt-5-nano has different API requirements than older models
+            api_params = {
+                "model": self.model,
+                "messages": [{"role": "user", "content": full_prompt}],
+            }
+
+            # gpt-5-nano specific configuration
+            if "gpt-5" in self.model:
+                api_params["max_completion_tokens"] = 500
+                # gpt-5-nano only supports default temperature=1, not 0
+            else:
+                api_params["max_tokens"] = 500
+                api_params["temperature"] = 0
+
+            response = self.client.chat.completions.create(**api_params)
 
             llm_response = response.choices[0].message.content
 
